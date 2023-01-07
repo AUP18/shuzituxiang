@@ -77,8 +77,7 @@ def Get_new_face():
 
         # 检测人脸，将每一帧摄像头记录的数据带入OpenCv中，让Classifier判断人脸
         # 其中gray为要检测的灰度图像，1.3为每次图像尺寸减小的比例，5为minNeighbors
-        face_detector = face_cascade
-        faces = face_detector.detectMultiScale(gray, 1.3, 5)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
         # 框选人脸，for循环保证一个能检测的实时动态视频流
         for (x, y, w, h) in faces:
@@ -90,7 +89,7 @@ def Get_new_face():
             T = Total_face_num
             cv2.imwrite("./data/User." + str(T) + '.' + str(sample_num) + '.jpg', gray[y:y + h, x:x + w])
 
-        pictur_num = 30  # 表示摄像头拍摄取样的数量,越多效果越好，但获取以及训练的越慢
+        pictur_num = 1000  # 表示摄像头拍摄取样的数量,越多效果越好，但获取以及训练的越慢
 
         cv2.waitKey(1)
         if sample_num > pictur_num:
@@ -110,7 +109,7 @@ def Train_new_face():
     path = 'data'
 
     # 初始化识别的方法
-    recog = cv2.face.LBPHFaceRecognizer_create()
+    recog = recognizer
 
     # 调用函数并将数据喂给识别器训练
     faces, ids = get_images_and_labels(path)
@@ -238,7 +237,7 @@ def scan_face():
                     else:
                         # print("无法识别的ID:{}\t".format(idnum), end="")
                         user_name = "Untagged user:" + str(idnum)
-                    confidence = "{0}%", format(round(100 - confidence))
+                    confidence = round(100 - confidence)
                 else:  # 无法识别此对象，那么就开始训练
                     user_name = "unknown"
                     # print("检测到陌生人脸\n")
@@ -378,7 +377,7 @@ def f_exit():  # 退出按钮
 '''
 
 window = tk.Tk()
-window.title('Cheney\' Face_rec 3.0')   # 窗口标题
+window.title('Cheney\' Face_rec 3.0')  # 窗口标题
 window.geometry('1000x500')  # 这里的乘是小x
 
 # 在图形界面上设定标签，类似于一个提示窗口的作用
@@ -386,6 +385,7 @@ var = tk.StringVar()
 l = tk.Label(window, textvariable=var, bg='green', fg='white', font=('Arial', 12), width=50, height=4)
 # 说明： bg为背景，fg为字体颜色，font为字体，width为长，height为高，这里的长和高是字符的长和高，比如height=2,就是标签有2个字符这么高
 l.pack()  # 放置l控件
+var.set('人脸识别 by Cheney')
 
 # 在窗口界面设置放置Button按键并绑定处理函数
 button_a = tk.Button(window, text='开始刷脸', font=('Arial', 12), width=10, height=2, command=f_scan_face)
@@ -394,8 +394,8 @@ button_a.place(x=800, y=120)
 button_b = tk.Button(window, text='录入人脸', font=('Arial', 12), width=10, height=2, command=f_rec_face)
 button_b.place(x=800, y=220)
 
-button_b = tk.Button(window, text='退出', font=('Arial', 12), width=10, height=2, command=f_exit)
-button_b.place(x=800, y=320)
+button_c = tk.Button(window, text='退出', font=('Arial', 12), width=10, height=2, command=f_exit)
+button_c.place(x=800, y=320)
 
 panel = tk.Label(window, width=500, height=350)  # 摄像头模块大小
 panel.place(x=10, y=100)  # 摄像头模块的位置
@@ -421,3 +421,8 @@ video_loop()
 #  窗口循环，用于显示
 window.mainloop()
 
+'''
+============================================================================================
+以上是关于界面的设计
+============================================================================================
+'''
